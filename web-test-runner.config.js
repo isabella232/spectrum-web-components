@@ -13,6 +13,7 @@ module.exports = {
             'packages/icons-ui/**',
             'packages/icons-workflow/**',
             'test/**',
+            'projects/**',
         ],
         threshold: {
             statements: 98,

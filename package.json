@@ -16,11 +16,12 @@
     },
     "scripts": {
         "analyze": "lit-analyzer 'packages/*/src/**/!(*.css).ts'",
-        "get-ready": "yarn build:clear-cache && run-p spectrum-vars process-icons process-spectrum && yarn build",
+        "get-ready": "yarn build:clear-cache && run-p spectrum-vars process-icons process-spectrum testing-library && yarn build",
         "postinstall": "yarn get-ready",
         "spectrum-vars": "node ./scripts/spectrum-vars.js && prettier --write 'packages/**/*.css'",
         "process-spectrum": "node ./scripts/process-spectrum-css.js && prettier --write 'packages/**/*.css'",
         "process-icons": "run-p icons icons:ui icons:workflow",
+        "testing-library": "cd projects/testing-library__dom && yarn build",
         "icons": "node ./scripts/process-icons.js && prettier --write 'packages/**/*.svg.ts'",
         "icons:ui": "lerna run --scope @spectrum-web-components/icons-ui build",
         "icons:workflow": "lerna run --scope @spectrum-web-components/icons-workflow build",
