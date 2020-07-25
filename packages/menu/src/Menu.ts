@@ -11,14 +11,9 @@ governing permissions and limitations under the License.
 */
 
 import { html, LitElement, CSSResultArray, TemplateResult } from 'lit-element';
+import { MenuItem } from './';
 
 import menuStyles from './menu.css.js';
-
-interface MenuItem extends HTMLElement {
-    disabled: boolean;
-    selected: boolean;
-    tabIndex: number;
-}
 
 export interface MenuQueryRoleEventDetail {
     role: string;
@@ -58,7 +53,7 @@ export class Menu extends LitElement {
         this.stopListeningToKeyboard = this.stopListeningToKeyboard.bind(this);
         this.onClick = this.onClick.bind(this);
         this.addEventListener('click', this.onClick);
-        this.addEventListener('focusin', this.startListeningToKeyboard);
+        this.addEventListener('focusin', this.handleFocusin);
         this.addEventListener('focusout', this.stopListeningToKeyboard);
     }
 
@@ -66,7 +61,6 @@ export class Menu extends LitElement {
         if (this.menuItems.length === 0) {
             return;
         }
-
         const focusInItem = this.menuItems[this.focusInItemIndex] as MenuItem;
         this.focusedItemIndex = this.focusInItemIndex;
         focusInItem.focus();
@@ -86,6 +80,14 @@ export class Menu extends LitElement {
             return;
         }
         this.prepareToCleanUp();
+    }
+
+    private handleFocusin(event: FocusEvent): void {
+        const target = event.target as Menu;
+        if (this === target) {
+            this.focus();
+        }
+        this.startListeningToKeyboard();
     }
 
     public startListeningToKeyboard(): void {

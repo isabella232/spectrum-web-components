@@ -1,0 +1,10 @@
+<div class="section {{ partType }}">
+    {{ content | safe }}
+</div>
+{% if partType === 'examples' %}
+<script type="module">
+    document.title = '{{ title }}';
+    document.querySelector('sp-sidenav').value = '{{ componentName }}';
+    document.querySelector('#page-title').textContent = 'sp-{{ componentName }}';
+</script>
+{% endif %}

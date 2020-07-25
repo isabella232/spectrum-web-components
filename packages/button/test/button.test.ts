@@ -87,19 +87,19 @@ describe('Button', () => {
 
         const labelTestableEl = (el as unknown) as TestableButtonType;
 
-        expect(labelTestableEl.hasLabel).to.be.true;
+        expect(labelTestableEl.hasLabel, 'starts with label').to.be.true;
 
         testNode.textContent = '';
 
         await elementUpdated(el);
 
-        expect(labelTestableEl.hasLabel).to.be.false;
+        await waitUntil(() => labelTestableEl.hasLabel, 'label is removed');
 
         testNode.textContent = 'Button';
 
         await elementUpdated(el);
 
-        expect(labelTestableEl.hasLabel).to.be.true;
+        expect(labelTestableEl.hasLabel, 'label is returned').to.be.true;
     });
     it('loads default w/ an icon on the right', async () => {
         const el = await fixture<Button>(

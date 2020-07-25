@@ -88,7 +88,7 @@ describe('Sidenav', () => {
         expect(el.manageTabIndex).to.be.false;
 
         const item1 = el.querySelector('sp-sidenav-item') as SideNavItem;
-        expect(item1.manageTabIndex).to.be.false;
+        expect(item1.unmanagedTabIndex).to.be.true;
         expect(item1.tabIndex).to.equal(0);
 
         const newItem = document.createElement('sp-sidenav-item');
@@ -98,7 +98,7 @@ describe('Sidenav', () => {
 
         await elementUpdated(newItem);
 
-        expect(newItem.manageTabIndex).to.be.false;
+        expect(item1.unmanagedTabIndex).to.be.true;
         expect(newItem.tabIndex).to.equal(0);
 
         el.focus();
@@ -399,19 +399,19 @@ describe('Sidenav', () => {
         );
 
         await elementUpdated(el);
-        expect(el.manageTabIndex).to.be.true;
+        expect(el.manageTabIndex, 'el').to.be.true;
 
         const item1 = el.querySelector('sp-sidenav-item') as SideNavItem;
 
         await elementUpdated(item1);
-        expect(item1.manageTabIndex).to.be.true;
+        expect(item1.unmanagedTabIndex, 'existing item').to.be.false;
         expect(item1.tabIndex).to.equal(-1);
 
         const item2 = document.createElement('sp-sidenav-item');
         item2.value = 'Section 1';
         item2.label = 'Section 1';
 
-        expect(item2.manageTabIndex).to.be.false;
+        expect(item2.unmanagedTabIndex, 'unattached item').to.be.false;
         expect(item2.tabIndex, 'before').to.equal(0);
 
         await elementUpdated(el);
@@ -420,7 +420,7 @@ describe('Sidenav', () => {
 
         await elementUpdated(item2);
 
-        expect(item2.manageTabIndex).to.be.true;
+        expect(item2.unmanagedTabIndex, 'attached item').to.be.false;
         expect(item2.tabIndex, 'after').to.equal(-1);
     });
 });

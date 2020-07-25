@@ -25,6 +25,7 @@ import { RadioGroup } from '@spectrum-web-components/radio';
 import '@spectrum-web-components/button/sp-button.js';
 import { Button } from '@spectrum-web-components/button';
 import '@spectrum-web-components/popover/sp-popover.js';
+import { Popover } from '@spectrum-web-components/popover';
 import '@spectrum-web-components/radio/sp-radio.js';
 import '@spectrum-web-components/radio/sp-radio-group.js';
 import '@spectrum-web-components/overlay/overlay-trigger.js';
@@ -297,6 +298,12 @@ class RecursivePopover extends LitElement {
                     direction="${this.placement}"
                     tip
                     open
+                    @focus=${(event: FocusEvent) => {
+                        const target = event.target as Popover;
+                        const firstChild = target
+                            .children[0] as RecursivePopover;
+                        firstChild.focus();
+                    }}
                 >
                     ${this.depth < MAX_DEPTH
                         ? html`
@@ -312,6 +319,14 @@ class RecursivePopover extends LitElement {
                 </sp-popover>
             </overlay-trigger>
         `;
+    }
+
+    protected firstUpdated(): void {
+        if (this.tabIndex !== -1) {
+            this.tabIndex = 0;
+        } else {
+            this.removeAttribute('tabindex');
+        }
     }
 }
 customElements.define('recursive-popover', RecursivePopover);

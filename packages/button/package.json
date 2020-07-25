@@ -42,12 +42,8 @@
         "/src/"
     ],
     "sideEffects": [
-        "./sp-action-button.js",
-        "./sp-action-button.ts",
-        "./sp-button.js",
-        "./sp-button.ts",
-        "./sp-clear-button.js",
-        "./sp-clear-button.ts"
+        "./sp-*.js",
+        "./sp-*.ts"
     ],
     "scripts": {
         "test": "karma start --coverage"

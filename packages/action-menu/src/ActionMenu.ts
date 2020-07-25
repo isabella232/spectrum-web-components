@@ -25,7 +25,7 @@ import actionMenuStyles from './action-menu.css.js';
 /**
  * @slot options - The menu with options that will display when the dropdown is open
  */
-export class ActionMenu extends ObserveSlotText(DropdownBase) {
+export class ActionMenu extends ObserveSlotText(DropdownBase, 'label') {
     public static get styles(): CSSResultArray {
         return [...super.styles, actionMenuStyles];
     }

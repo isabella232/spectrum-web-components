@@ -31,10 +31,10 @@ export class SideNavItem extends LikeAnchor(Focusable) {
     }
 
     @property()
-    public value: string | undefined = undefined;
+    public value?: string;
 
     @property({ type: Boolean, attribute: false })
-    public manageTabIndex = false;
+    public unmanagedTabIndex = false;
 
     @property({ type: Boolean, reflect: true })
     public selected = false;
@@ -67,17 +67,19 @@ export class SideNavItem extends LikeAnchor(Focusable) {
         super.firstUpdated(changes);
         const parentSideNav = this.parentSideNav;
         if (parentSideNav) {
-            parentSideNav.addEventListener('sidenav-select', (event) =>
-                this.handleSideNavSelect(event)
+            parentSideNav.addEventListener(
+                'sidenav-select',
+                this.handleSideNavSelect
             );
             this.selected =
                 this.value != null && this.value === parentSideNav.value;
         }
     }
 
-    protected handleSideNavSelect(event: Event): void {
-        this.selected = event.target === this;
-    }
+    protected handleSideNavSelect = (event: Event): void => {
+        const target = event.target as SideNavItem | null;
+        this.selected = target === this;
+    };
 
     protected handleClick(event?: Event): void {
         if (!this.href && event) {
@@ -122,7 +124,9 @@ export class SideNavItem extends LikeAnchor(Focusable) {
         const tabIndexForSelectedState = this.selected ? '0' : '-1';
         return html`
             <a
-                tabindex=${this.manageTabIndex ? tabIndexForSelectedState : '0'}
+                tabindex=${this.unmanagedTabIndex
+                    ? '0'
+                    : tabIndexForSelectedState}
                 href=${this.href || '#'}
                 target=${ifDefined(this.target)}
                 download=${ifDefined(this.download)}
@@ -140,15 +144,17 @@ export class SideNavItem extends LikeAnchor(Focusable) {
                 ? html`
                       <slot></slot>
                   `
-                : undefined}
+                : html``}
         `;
     }
 
     protected updated(changes: PropertyValues): void {
         super.updated(changes);
-        if (changes.has('selected') || changes.has('manageTabIndex')) {
+        if (changes.has('selected') || changes.has('unmanagedTabIndex')) {
             const tabIndexForSelectedState = this.selected ? 0 : -1;
-            this.tabIndex = this.manageTabIndex ? tabIndexForSelectedState : 0;
+            this.tabIndex = this.unmanagedTabIndex
+                ? 0
+                : tabIndexForSelectedState;
         }
     }
 
@@ -159,8 +165,6 @@ export class SideNavItem extends LikeAnchor(Focusable) {
                 cancelable: true,
             })
         );
-        if (manageTabIndex) {
-            this.manageTabIndex = true;
-        }
+        this.unmanagedTabIndex = !manageTabIndex;
     }
 }
