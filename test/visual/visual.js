@@ -29,6 +29,21 @@ module.exports = {
         describe('👀 page screenshots are correct', function () {
             let server, browser, page;
 
+            async function startRegressionServer() {
+                const config = createConfig({
+                    port: 4444,
+                    nodeResolve: true,
+                    appIndex: 'index.hml',
+                    rootDir: path.resolve(
+                        process.cwd(),
+                        'documentation',
+                        'dist',
+                        'storybook'
+                    ),
+                });
+                ({ server } = await startServer(config));
+            }
+
             before(async function () {
                 // Create the test directory if needed.
                 if (!fs.existsSync(currentDir)) {
@@ -51,10 +66,13 @@ module.exports = {
                     rimraf.sync(`${baselineDir}/${type}/userDataDir`);
                 }
                 fs.mkdirSync(`${baselineDir}/${type}/userDataDir`);
+
+                await startRegressionServer();
             });
 
             after(() => {
                 browser.close();
+                server.close();
             });
 
             before(async function () {
@@ -69,23 +87,7 @@ module.exports = {
 
             describe('default view', function () {
                 beforeEach(async function () {
-                    const config = createConfig({
-                        port: 4444,
-                        nodeResolve: true,
-                        appIndex: 'index.hml',
-                        rootDir: path.resolve(
-                            process.cwd(),
-                            'documentation',
-                            'dist',
-                            'storybook'
-                        ),
-                    });
-                    ({ server } = await startServer(config));
                     return page.setViewport({ width: 800, height: 600 });
-                });
-
-                afterEach(() => {
-                    server.close();
                 });
 
                 for (let i = 0; i < stories.length; i++) {
@@ -97,12 +99,23 @@ module.exports = {
         });
 
         async function takeAndCompareScreenshot(page, test) {
-            await page.goto(
-                `http://127.0.0.1:4444/iframe.html?id=${test}&knob-Color_Theme=${color}&knob-Scale_Theme=${scale}`,
-                {
-                    waitUntil: ['load', 'networkidle0'],
-                }
-            );
+            try {
+                await page.goto(
+                    `http://127.0.0.1:4444/iframe.html?id=${test}&knob-Color_Theme=${color}&knob-Scale_Theme=${scale}`,
+                    {
+                        waitUntil: ['load', 'networkidle0'],
+                    }
+                );
+            } catch (e) {
+                server.close();
+                await startRegressionServer();
+                await page.goto(
+                    `http://127.0.0.1:4444/iframe.html?id=${test}&knob-Color_Theme=${color}&knob-Scale_Theme=${scale}`,
+                    {
+                        waitUntil: ['load', 'networkidle0'],
+                    }
+                );
+            }
             await page.waitForFunction(
                 () =>
                     document.querySelector('sp-theme') &&
