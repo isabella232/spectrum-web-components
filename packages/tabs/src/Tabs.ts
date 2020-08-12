@@ -211,7 +211,7 @@ export class Tabs extends Focusable {
     };
 
     private onKeyDown = (event: KeyboardEvent): void => {
-        if (event.key === 'Enter' || event.key === ' ') {
+        if (event.code === 'Enter' || event.code === 'Space') {
             event.preventDefault();
             const target = event.target as HTMLElement;
             /* istanbul ignore else */
