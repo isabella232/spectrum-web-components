@@ -10,35 +10,37 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { ObserveSlotText } from '../src/observe-slot-text.js';
+import { ObserveSlotPresence } from '../src/observe-slot-presence.js';
 import { LitElement, html, TemplateResult } from 'lit-element';
 import { fixture, elementUpdated, expect } from '@open-wc/testing';
 
-class ObserverTest extends ObserveSlotText(LitElement) {
+class ObserverTest extends ObserveSlotPresence(
+    LitElement,
+    '[slot="test-slot"]'
+) {
     protected render(): TemplateResult {
         return html`
-            <slot @slotchange=${this.manageTextObservedSlot}></slot>
+            Test Element
         `;
     }
 }
 
-customElements.define('observe-slot-test', ObserverTest);
+customElements.define('observe-presence-test', ObserverTest);
 
-describe('ObserveSlotText', () => {
+describe('ObserveSlotPresence', () => {
     it('does no management when slot unavailable', async () => {
         const el = await fixture<ObserverTest>(
             html`
-                <observe-slot-test></observe-slot-test>
+                <observe-presence-test></observe-presence-test>
             `
         );
         await elementUpdated(el);
 
-        expect(el.slotHasContent).to.be.false;
+        expect(el.slotContentIsPresent).to.be.false;
 
-        el.textContent = `hi, i'm some text`;
-
+        el.innerHTML = '<div slot="test-slot"></div>';
         await elementUpdated(el);
 
-        expect(el.slotHasContent).to.be.true;
+        expect(el.slotContentIsPresent).to.be.true;
     });
 });
