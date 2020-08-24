@@ -29,8 +29,8 @@ module.exports = function (eleventyConfig) {
             permalinkAttrs: (slug, state) => ({ 'aria-label': '§' }),
             renderPermalink: (slug, opts, state, idx) => {
                 const space = () =>
-                    Object.assign(new state.Token('text', '', 0), {
-                        content: ' ',
+                    Object.assign(new state.Token('html_block', '', 0), {
+                        content: '&nbsp;',
                     });
 
                 const linkTokens = [

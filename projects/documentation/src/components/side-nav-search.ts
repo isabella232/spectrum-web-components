@@ -70,7 +70,7 @@ export class SearchComponent extends LitElement {
         if (!focusResultsList) {
             return;
         }
-        this.focusResults({ willFocusResultsList, shouldFocusResultsList });
+        this.focusResults({ shouldFocusResultsList });
     }
 
     private handlePopoverKeydown(event: KeyboardEvent) {
@@ -85,10 +85,8 @@ export class SearchComponent extends LitElement {
     }
 
     private async focusResults({
-        willFocusResultsList,
         shouldFocusResultsList,
     }: {
-        willFocusResultsList?: boolean;
         shouldFocusResultsList?: boolean;
     }): Promise<void> {
         await this.updateComplete;

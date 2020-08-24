@@ -6,9 +6,7 @@
 -   homepage
 -   /guides
     2 size the usage images
-    2 split styles.css into a file for home and a file for component pages?
     3 meta in the header - can we capture the Spectrum images for card generation?
-    4 make rel=stylesheet processing nicer
 
 # Building
 

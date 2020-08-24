@@ -15,7 +15,7 @@ export { postHTMLSpectrumTypeography };
 
 // Add a few doc-specific transforms for code examples
 
-export default (url) =>
+export default () =>
     postHTMLSpectrumTypeography({
         customTransforms: [
             {
@@ -65,7 +65,6 @@ export default (url) =>
                     if (node.attrs.class === 'header-anchor') {
                         node.attrs = {
                             ...node.attrs,
-                            href: url + node.attrs.href,
                         };
                     }
                     return node;

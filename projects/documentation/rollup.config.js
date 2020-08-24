@@ -10,73 +10,19 @@ const { injectManifest } = require('rollup-plugin-workbox');
 const path = require('path');
 const { createMpaConfig } = require('./_building-rollup/createMpaConfig.js');
 import posthtml from 'posthtml';
-import spectrumMarkdown, {
-    postHTMLSpectrumTypeography,
-} from './src/utils/posthtml-spectrum-docs-markdown';
-import load from './src/utils/posthtml-loading';
+import spectrumMarkdown from './src/utils/posthtml-spectrum-docs-markdown';
 const Terser = require('terser');
 const { postCSSPlugins } = require('../../scripts/css-processing.js');
-const fs = require('fs-extra');
+const fs = require('fs');
 const postcss = require('postcss');
 const purgecss = require('@fullhuman/postcss-purgecss');
 
-const transform = (inputPath) => {
-    const url = inputPath.split('_site/')[1];
-    return (html, args) => {
-        const preloadModules = [
-            // {
-            //     regex: /theme-dark\./,
-            //     options: {
-            //         method: 'modulepreload',
-            //         media: 'screen and (prefers-color-scheme: dark)',
-            //         crossorigin: 'anonymous',
-            //     },
-            // },
-            // {
-            //     regex: /theme-light\./,
-            //     options: {
-            //         method: 'modulepreload',
-            //         media: 'screen and (prefers-color-scheme: light)',
-            //         crossorigin: 'anonymous',
-            //     },
-            // },
-            // {
-            //     regex: /scale-medium\./,
-            //     options: {
-            //         method: 'modulepreload',
-            //         crossorigin: 'anonymous',
-            //     },
-            // },
-        ];
-        const bundle = args.bundles.module ? args.bundles.module : args.bundle;
-        for (let path in bundle.bundle) {
-            const module = bundle.bundle[path];
-            if (module.modules) {
-                preloadModules.map((preloadModule) => {
-                    if (
-                        Object.keys(module.modules).find((key) =>
-                            preloadModule.regex.test(key)
-                        )
-                    ) {
-                        preloadModule.fileName = module.fileName;
-                    }
-                });
-            }
-        }
+const injectUsedCss = (css) => {
+    return (html) => {
         const initialHTML = posthtml()
-            .use(
-                spectrumMarkdown(url),
-                ...preloadModules.map((preloadModule) =>
-                    load([preloadModule.fileName], preloadModule.options)
-                )
-            )
+            .use(spectrumMarkdown())
             .process(html, { sync: true }).html;
-        const inputCss = fs.readFileSync(
-            `${process.cwd()}/src/components/styles.css`,
-            { encoding: 'utf8' }
-        );
-        const htmlOutput = postcss([
-            ...postCSSPlugins(),
+        const finalHTML = postcss([
             purgecss({
                 content: [
                     {
@@ -86,48 +32,36 @@ const transform = (inputPath) => {
                 ],
             }),
         ])
-            .process(inputCss, {
+            .process(css, {
                 from: `${process.cwd()}/src/components/`,
-                // to: outputCssPath,
             })
             .then((result) => {
-                return posthtml()
-                    .use(
-                        postHTMLSpectrumTypeography({
-                            customTransforms: [
-                                {
-                                    selector: '[href="styles.css"]',
-                                    fn: (node) => {
-                                        return {
-                                            tag: 'style',
-                                            content: [result.css],
-                                        };
-                                    },
-                                },
-                            ],
-                        })
+                return initialHTML
+                    .replace(
+                        '<link rel="stylesheet" href="styles.css">',
+                        `<style>${result.css}</style>`
                     )
-                    .process(initialHTML, { sync: true }).html;
+                    .replace(
+                        /src="\//g,
+                        process.env.SWC_DIR
+                            ? `src="/${process.env.SWC_DIR}/`
+                            : 'src="/'
+                    )
+                    .replace(
+                        /href="\//g,
+                        process.env.SWC_DIR
+                            ? `href="/${process.env.SWC_DIR}/`
+                            : 'href="/'
+                    )
+                    .replace(
+                        "('/sw.js')",
+                        process.env.SWC_DIR
+                            ? `('/${process.env.SWC_DIR}/sw.js')`
+                            : "('/sw.js')"
+                    );
             });
-        return htmlOutput;
+        return finalHTML;
     };
-};
-
-const optionsHTML = {
-    inputPathBoundTransform: transform,
-    minify: {
-        collapseWhitespace: true,
-        conservativeCollapse: true,
-        removeComments: true,
-        caseSensitive: true,
-        removeRedundantAttributes: true,
-        removeScriptTypeAttributes: true,
-        removeStyleLinkTypeAttributes: true,
-        useShortDoctype: true,
-        minifyCSS: true,
-        /** @param {string} code */
-        minifyJS: (code) => Terser.minify(code).code,
-    },
 };
 
 const configSW = deepmerge(
@@ -146,6 +80,30 @@ const configSW = deepmerge(
 );
 
 module.exports = async () => {
+    const inputCss = fs.readFileSync(
+        `${process.cwd()}/src/components/styles.css`,
+        'utf8'
+    );
+    const { css } = await postcss([...postCSSPlugins()]).process(inputCss, {
+        from: `${process.cwd()}/src/components/`,
+    });
+    const optionsHTML = {
+        transform: injectUsedCss(css),
+        minify: {
+            collapseWhitespace: true,
+            conservativeCollapse: true,
+            removeComments: true,
+            caseSensitive: true,
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            useShortDoctype: true,
+            minifyCSS: true,
+            /** @param {string} code */
+            minifyJS: (code) => Terser.minify(code).code,
+        },
+    };
+
     const mpaConfig = await createMpaConfig({
         outputDir: 'dist',
         legacyBuild: false,
