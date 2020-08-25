@@ -28,6 +28,7 @@ async function createMpaConfig(options) {
             html: {
                 flatten: false,
                 html,
+                publicPath: '/',
             },
             workbox: {
                 navigateFallback: '/404.html',

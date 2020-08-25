@@ -71,61 +71,85 @@ registerRoute(
     })
 );
 
-// const shellStrategy = new CacheFirst({ cacheName: cacheNames.precache });
-// const contentStrategy = new StaleWhileRevalidate({ cacheName: 'content' });
+const shellStrategy = new CacheFirst({ cacheName: cacheNames.precache });
+const contentStrategy = new StaleWhileRevalidate({ cacheName: 'content' });
 
-// const componentHandler = composeStrategies([
-//     () =>
-//         shellStrategy.handle({
-//             request: new Request(getCacheKeyForURL('/shell-start.html')),
-//         }),
-//     ({ url }) =>
-//         contentStrategy.handle({
-//             request: new Request(
-//                 url.pathname.replace('index.html', '') + 'content/index.html'
-//             ),
-//         }),
-//     ({ url }) =>
-//         contentStrategy.handle({
-//             request: new Request(
-//                 url.pathname.replace('index.html', '') +
-//                     'api-content/index.html'
-//             ),
-//         }),
-//     () =>
-//         shellStrategy.handle({
-//             request: new Request(getCacheKeyForURL('/shell-end.html')),
-//         }),
-// ]);
+const componentHandler = composeStrategies([
+    () =>
+        shellStrategy.handle({
+            request: new Request(getCacheKeyForURL('/shell-start.html')),
+        }),
+    ({ url }) =>
+        contentStrategy.handle({
+            request: new Request(
+                url.pathname.replace('index.html', '') + 'content/index.html'
+            ),
+        }),
+    ({ url }) =>
+        contentStrategy.handle({
+            request: new Request(
+                url.pathname.replace('index.html', '') +
+                    'api-content/index.html'
+            ),
+        }),
+    () =>
+        shellStrategy.handle({
+            request: new Request(getCacheKeyForURL('/shell-end.html')),
+        }),
+]);
 
-// const guidesHandler = composeStrategies([
-//     () =>
-//         shellStrategy.handle({
-//             request: new Request(getCacheKeyForURL('/shell-start.html')),
-//         }),
-//     ({ url }) =>
-//         contentStrategy.handle({
-//             request: new Request(
-//                 url.pathname.replace('index.html', '') + 'content/index.html'
-//             ),
-//         }),
-//     () =>
-//         shellStrategy.handle({
-//             request: new Request(getCacheKeyForURL('/shell-end.html')),
-//         }),
-// ]);
+const guideHandler = composeStrategies([
+    () =>
+        shellStrategy.handle({
+            request: new Request(getCacheKeyForURL('/shell-start.html')),
+        }),
+    ({ url }) =>
+        contentStrategy.handle({
+            request: new Request(
+                url.pathname.replace('index.html', '') + 'content/index.html'
+            ),
+        }),
+    () =>
+        shellStrategy.handle({
+            request: new Request(getCacheKeyForURL('/shell-end.html')),
+        }),
+]);
 
-// const homeHandler = guidesHandler;
+const homeHandler = composeStrategies([
+    // () =>
+    //     shellStrategy.handle({
+    //         request: new Request(getCacheKeyForURL('/shell-start.html')),
+    //     }),
+    ({ url }) =>
+        contentStrategy.handle({
+            request: new Request(
+                url.pathname //.replace('index.html', '') + 'content/index.html'
+            ),
+        }),
+    // () =>
+    //     shellStrategy.handle({
+    //         request: new Request(getCacheKeyForURL('/shell-end.html')),
+    //     }),
+]);
 
-// const navigationHandler = (...args) => {
-//     if (args[0].url.pathname.search('components') !== -1) {
-//         return componentHandler(...args);
-//     } else if (args[0].url.pathname.search('guides') !== -1) {
-//         return guideHandler(...args);
-//     }
-//     return homeHandler(...args);
-// };
+const navigationHandler = (...args) => {
+    const component = args[0].url.pathname.search('components') !== -1;
+    const api = args[0].url.pathname.search('api') !== -1;
+    const guide = args[0].url.pathname.search('guides') !== -1;
+    if (component && api) {
+        console.log('component api');
+        return componentHandler(...args);
+    } else if (component) {
+        console.log('component');
+        return componentHandler(...args);
+    } else if (guide) {
+        console.log('guide');
+        return guideHandler(...args);
+    }
+    console.log('home');
+    return homeHandler(...args);
+};
 
-// registerRoute(({ request }) => request.mode === 'navigate', navigationHandler);
+registerRoute(({ request }) => request.mode === 'navigate', navigationHandler);
 
 precacheAndRoute(self.__WB_MANIFEST);
