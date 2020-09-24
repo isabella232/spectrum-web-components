@@ -102,51 +102,53 @@ export class Dialog extends ObserveSlotPresence(
 
     protected render(): TemplateResult {
         return html`
-            <slot name="hero"></slot>
-            <div class="header">
-                <slot name="title"></slot>
-                ${this.error
-                    ? html`
-                          <sp-icon class="type-icon alert-medium" size="s">
-                              ${AlertMediumIcon({ hidden: true })}
-                          </sp-icon>
-                      `
-                    : html``}
-                ${this.dismissible
-                    ? html`
-                          <sp-action-button
-                              class="close-button"
-                              label="Close"
-                              quiet
-                              @click=${this.close}
-                          >
-                              <sp-icon class="cross-large">
-                                  ${CrossLargeIcon({ hidden: true })}
+            <div class="spectrum-Dialog-grid">
+                <slot name="hero"></slot>
+                <div class="header">
+                    <slot name="title"></slot>
+                    ${this.error
+                        ? html`
+                              <sp-icon class="type-icon alert-medium" size="s">
+                                  ${AlertMediumIcon({ hidden: true })}
                               </sp-icon>
-                          </sp-action-button>
-                      `
-                    : html``}
-                ${this.mode
+                          `
+                        : html``}
+                    ${this.dismissible
+                        ? html`
+                              <sp-action-button
+                                  class="close-button"
+                                  label="Close"
+                                  quiet
+                                  @click=${this.close}
+                              >
+                                  <sp-icon class="cross-large">
+                                      ${CrossLargeIcon({ hidden: true })}
+                                  </sp-icon>
+                              </sp-action-button>
+                          `
+                        : html``}
+                    ${this.mode
+                        ? html`
+                              <slot name="button"></slot>
+                          `
+                        : html``}
+                </div>
+                <div class="content">
+                    <slot @slotchange=${this.onContentSlotChange}></slot>
+                </div>
+                ${!this.mode || this.hasFooter
                     ? html`
-                          <slot name="button"></slot>
+                          <div class="footer">
+                              <slot name="footer"></slot>
+                              ${!this.mode
+                                  ? html`
+                                        <slot name="button"></slot>
+                                    `
+                                  : html``}
+                          </div>
                       `
                     : html``}
             </div>
-            <div class="content">
-                <slot @slotchange=${this.onContentSlotChange}></slot>
-            </div>
-            ${!this.mode || this.hasFooter
-                ? html`
-                      <div class="footer">
-                          <slot name="footer"></slot>
-                          ${!this.mode
-                              ? html`
-                                    <slot name="button"></slot>
-                                `
-                              : html``}
-                      </div>
-                  `
-                : html``}
         `;
     }
 

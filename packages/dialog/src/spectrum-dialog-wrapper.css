@@ -10,103 +10,35 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 
 THIS FILE IS MACHINE GENERATED. DO NOT EDIT */
-:host([dir='ltr']) .spectrum-Dialog-hero {
-    /* [dir=ltr] .spectrum-Dialog-hero */
-    margin-left: calc(
-        -1 * var(--spectrum-dialog-padding)
-    ); /* [dir=ltr] .spectrum-Dialog-hero */
-    border-top-left-radius: var(
-        --spectrum-dialog-border-radius,
-        var(--spectrum-global-dimension-size-50)
-    );
+:host([dir='ltr']) .spectrum-Dialog-heading {
+    /* [dir=ltr] .spectrum-Dialog-heading */
+    padding-right: var(--spectrum-global-dimension-size-200);
 }
-:host([dir='ltr']) .spectrum-Dialog-hero,
-:host([dir='rtl']) .spectrum-Dialog-hero {
-    /* [dir=ltr] .spectrum-Dialog-hero,
-   * [dir=rtl] .spectrum-Dialog-hero */
-    margin-right: calc(-1 * var(--spectrum-dialog-padding));
+:host([dir='rtl']) .spectrum-Dialog-heading {
+    /* [dir=rtl] .spectrum-Dialog-heading */
+    padding-left: var(--spectrum-global-dimension-size-200);
 }
-:host([dir='rtl']) .spectrum-Dialog-hero {
-    /* [dir=rtl] .spectrum-Dialog-hero */
-    margin-left: calc(
-        -1 * var(--spectrum-dialog-padding)
-    ); /* [dir=rtl] .spectrum-Dialog-hero */
-    border-top-left-radius: var(
-        --spectrum-dialog-border-radius,
-        var(--spectrum-global-dimension-size-50)
-    );
+:host([dir='ltr']) .spectrum-Dialog-heading.spectrum-Dialog-heading--noHeader {
+    /* [dir=ltr] .spectrum-Dialog-heading.spectrum-Dialog-heading--noHeader */
+    padding-right: 0;
 }
-:host([dir='ltr']) .spectrum-Dialog-hero,
-:host([dir='rtl']) .spectrum-Dialog-hero {
-    /* [dir=ltr] .spectrum-Dialog-hero,
-   * [dir=rtl] .spectrum-Dialog-hero */
-    border-top-right-radius: var(
-        --spectrum-dialog-border-radius,
-        var(--spectrum-global-dimension-size-50)
-    );
+:host([dir='rtl']) .spectrum-Dialog-heading.spectrum-Dialog-heading--noHeader {
+    /* [dir=rtl] .spectrum-Dialog-heading.spectrum-Dialog-heading--noHeader */
+    padding-left: 0;
 }
-:host {
-    /* .spectrum-Dialog-wrapper */
-    position: fixed;
-    left: 0;
-    right: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    visibility: hidden;
-    pointer-events: none;
-    z-index: 2;
-    transition: visibility 0ms linear
-        var(--spectrum-global-animation-duration-100, 0.13s);
+:host([dir='ltr']) .spectrum-Dialog-buttonGroup {
+    /* [dir=ltr] .spectrum-Dialog-buttonGroup */
+    padding-left: var(--spectrum-global-dimension-size-200);
 }
-:host([open]) {
-    /* .spectrum-Dialog-wrapper.is-open */
-    visibility: visible;
-}
-.dialog:not([mode='fullscreen']):not([mode='fullscreen']) {
-    /* .spectrum-Dialog-wrapper .spectrum-Dialog:not(.spectrum-Dialog--fullscreen):not(.spectrum-Dialog--fullscreenTakeover) */
-    pointer-events: auto;
-    position: relative;
-    left: auto;
-    top: auto;
-    transform: translateY(
-        var(
-            --spectrum-dialog-entry-animation-distance,
-            var(--spectrum-global-dimension-size-250)
-        )
-    );
-    margin-top: -2vh;
-}
-:host([open]) .dialog:not([mode='fullscreen']):not([mode='fullscreen']) {
-    /* .spectrum-Dialog-wrapper .spectrum-Dialog:not(.spectrum-Dialog--fullscreen):not(.spectrum-Dialog--fullscreenTakeover).is-open */
-    transform: translateY(0);
-}
-:host([responsive]) {
-    /* .spectrum-Dialog-wrapper .spectrum-Dialog--responsive */
-    margin-top: 0;
+:host([dir='rtl']) .spectrum-Dialog-buttonGroup {
+    /* [dir=rtl] .spectrum-Dialog-buttonGroup */
+    padding-right: var(--spectrum-global-dimension-size-200);
 }
 :host([dir='ltr']) .spectrum-Dialog-closeButton {
     /* [dir=ltr] .spectrum-Dialog-closeButton */
-    right: calc(-1 * var(--spectrum-global-dimension-size-350));
+    margin-right: calc(26px - var(--spectrum-global-dimension-size-175));
 }
 :host([dir='rtl']) .spectrum-Dialog-closeButton {
     /* [dir=rtl] .spectrum-Dialog-closeButton */
-    left: calc(-1 * var(--spectrum-global-dimension-size-350));
-}
-:host([dir='ltr']) .spectrum-Dialog-typeIcon {
-    /* [dir=ltr] .spectrum-Dialog-typeIcon */
-    margin-left: var(
-        --spectrum-dialog-icon-margin-left,
-        var(--spectrum-global-dimension-static-size-300)
-    );
-}
-:host([dir='rtl']) .spectrum-Dialog-typeIcon {
-    /* [dir=rtl] .spectrum-Dialog-typeIcon */
-    margin-right: var(
-        --spectrum-dialog-icon-margin-left,
-        var(--spectrum-global-dimension-static-size-300)
-    );
+    margin-left: calc(26px - var(--spectrum-global-dimension-size-175));
 }
